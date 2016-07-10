@@ -23,16 +23,8 @@
     - name: waiting for server to come back
       local_action: wait_for host="eap1.coe.hst.sin2.redhat.com"  state=started delay=30 timeout=60
       sudo: false
-    - name: verify a reboot was actually initiated
+    - name: verify a reboot was successful
       # machine should have started after it has been rebooted
       shell: (( `date +%s` - `awk -F . '{print $1}' /proc/uptime` > {{ before_reboot.stdout }} ))
-    - name: print os
-      debug: msg='checking operating system is back up'
-    - name: verify httpd to start
-      #local_action: wait_for port=80 host="eap1.coe.hst.sin2.redhat.com" search_regex=OpenSSH delay=30
-      #shell: ss -tp state listening sport = :80 | grep httpd      
-      shell: netstat -tunlp | grep ":80 " | sed -e 's/.*\///'
-      register: results
-      sudo: false
-    - name: print results
-      debug: msg="{{results}} is running on port 80"	
+    - name: Ensure httpd starts
+      service: name=httpd state=started
