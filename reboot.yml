@@ -30,6 +30,11 @@
     - name: verify a reboot was actually initiated
       # machine should have started after it has been rebooted
       shell: (( `date +%s` - `awk -F . '{print $1}' /proc/uptime` > {{ before_reboot.stdout }} ))
+      debug: msg='Machine is rebooted'
     - name: verify httpd to start
-      local_action: wait_for port=80 host="eap1.coe.hst.sin2.redhat.com" search_regex=OpenSSH delay=30
+      #local_action: wait_for port=80 host="eap1.coe.hst.sin2.redhat.com" search_regex=OpenSSH delay=30
+      #shell: ss -tp state listening sport = :80 | grep httpd      
+      shell: netstat -tunlp | grep ":80 " | sed -e 's/.*\///'
+      register: results
+      debug: msg="{{results}} is started on port 80"     
       sudo: false
