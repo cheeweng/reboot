@@ -4,7 +4,6 @@
   tasks:
     - name: stop apache service
       service: name=httpd state=stopped
-      notify: reboot sequence
     - name: reboot sequence
       changed_when: "true"
       debug: msg='trigger machine reboot sequence'
